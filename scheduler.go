@@ -180,22 +180,18 @@ func (s *Scheduler) sortJobs() {
 //
 // Each job gets executed in a new routine to
 // reduce load and will only be called if the
-// kill value is not set. Then it will update
-// the next execution time from it's lapse if
-// any.
+// kill value is not set.
 func (s *Scheduler) execute(job *Job, now time.Time) {
+	// Update next instance if lapse is valid
+	// or remove if not (meaning that it will
+	// not be executed anymore)
+	if job.Lapse != 0 {
+		job.Time = now.Add(job.Lapse)
+	} else {
+		s.jobs = s.jobs[1:]
+	}
 	// Execute job if NOT programmed to kill
 	if !job.kill {
 		go job.Func(job, job.Param...)
 	}
-	// Update next instance if lapse exists
-	// and return
-	if job.Lapse != 0 {
-		job.Time = now.Add(job.Lapse)
-		return
-	}
-	// Jobs that get here are not valid anymore
-	// so we dalete them.
-	s.jobs = s.jobs[1:]
-	job = nil
 }
