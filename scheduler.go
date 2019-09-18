@@ -122,7 +122,6 @@ func (j *Job) Scheduler() *Scheduler {
 // Remove marks the job to delete in the next
 // tick when accessed by the queue without
 // executing it.
-//
 // It does not cancel current execution if is
 // being made in another routine.
 func (j *Job) Remove() {
@@ -135,9 +134,9 @@ func (j *Job) Remove() {
 
 // Every executes every job at marked time if
 // scheduler active.
-// Calls to function lock the current routine
-// so remember to use "go" if don't want this
-// behaviour.
+// Calls to this function will end up locking
+// the current routine so remember to create
+// a new one if don't want this behaviour.
 //
 // It accepts as params a check interval that
 // can be any time.Duration value from ms up.
